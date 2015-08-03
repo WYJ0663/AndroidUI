@@ -57,14 +57,15 @@ public class MoveImageView extends ImageView implements View.OnTouchListener {
         mWindowManager = (WindowManager) getContext().getApplicationContext().
                 getSystemService(Context.WINDOW_SERVICE);
         Display display = mWindowManager.getDefaultDisplay();
+        Point point = new Point();
 
-        screenWidth = display.getWidth();
-        screenHeight =  display.getHeight();
+        display.getSize(point);
+        screenWidth = point.x;
+        screenHeight = point.y;
     }
 
     @Override
     public boolean dispatchTouchEvent(MotionEvent event) {
-
 
         setOnTouchListener(this);
         return super.dispatchTouchEvent(event);
