@@ -10,46 +10,58 @@ import android.widget.LinearLayout;
 /**
  * Created by WYJ on 15/6/3.
  */
-public class VDHLayout extends LinearLayout
-{
-    private ViewDragHelper mDragger;
+public class VDHLayout extends LinearLayout {
 
-    public VDHLayout(Context context, AttributeSet attrs)
-    {
+    private ViewDragHelper viewDragHelper;
+
+    public VDHLayout(Context context) {
+        super(context);
+    }
+
+    public VDHLayout(Context context, AttributeSet attrs) {
         super(context, attrs);
-        mDragger = ViewDragHelper.create(this, 1.0f, new ViewDragHelper.Callback()
-        {
+
+
+        viewDragHelper = ViewDragHelper.create(this, 1.0f, new ViewDragHelper.Callback() {
             @Override
-            public boolean tryCaptureView(View child, int pointerId)
-            {
+            public boolean tryCaptureView(View view, int pointerId) {
+
                 return true;
             }
 
             @Override
-            public int clampViewPositionHorizontal(View child, int left, int dx)
-            {
-                return left;
+            public int clampViewPositionHorizontal(View child, int left, int dx) {
+                final int leftBound = getPaddingLeft();
+                final int rightBound = getWidth() - child.getWidth() - leftBound;
+
+                final int newLeft = Math.min(Math.max(left, leftBound), rightBound);
+
+                return newLeft;
             }
 
+
             @Override
-            public int clampViewPositionVertical(View child, int top, int dy)
-            {
-                return top;
+            public int clampViewPositionVertical(View child, int top, int dy) {
+                final int bopBound = getPaddingTop();
+                final int bottomBound = getHeight() - child.getHeight() - bopBound;
+
+                final int newTop = Math.min(Math.max(top, bopBound), bottomBound);
+
+                return newTop;
             }
         });
     }
 
-   @Override
-    public boolean onInterceptTouchEvent(MotionEvent event)
-    {
-        return mDragger.shouldInterceptTouchEvent(event);
+    @Override
+    public boolean onInterceptHoverEvent(MotionEvent event) {
+        return viewDragHelper.shouldInterceptTouchEvent(event);
     }
 
     @Override
-    public boolean onTouchEvent(MotionEvent event)
-    {
-        mDragger.processTouchEvent(event);
+    public boolean onTouchEvent(MotionEvent event) {
+        viewDragHelper.processTouchEvent(event);
         return true;
     }
+
 
 }

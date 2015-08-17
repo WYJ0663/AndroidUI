@@ -3,6 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/AndroidUI.iml" filepath="$PROJECT_DIR$/AndroidUI.iml" />
+      <module fileurl="file://$PROJECT_DIR$/CircleView/CircleView.iml" filepath="$PROJECT_DIR$/CircleView/CircleView.iml" />
       <module fileurl="file://$PROJECT_DIR$/DomeTouch/DomeTouch.iml" filepath="$PROJECT_DIR$/DomeTouch/DomeTouch.iml" />
       <module fileurl="file://$PROJECT_DIR$/FloatView/FloatView.iml" filepath="$PROJECT_DIR$/FloatView/FloatView.iml" />
       <module fileurl="file://$PROJECT_DIR$/SlideListView/SlideListView.iml" filepath="$PROJECT_DIR$/SlideListView/SlideListView.iml" />
