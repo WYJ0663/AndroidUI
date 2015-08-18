@@ -53,7 +53,7 @@ public class CircleView extends View {
         mProgress = 0;
         mDoProgress = 0;
 
-        mSpeed = 40;
+        mSpeed = 10;
 
         mPaint = new Paint();
         mPaint.setStrokeWidth(mCircleWidth); // 设置圆环的宽度
