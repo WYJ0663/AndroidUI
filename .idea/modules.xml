@@ -9,6 +9,7 @@
       <module fileurl="file://$PROJECT_DIR$/FlowLayout/FlowLayout.iml" filepath="$PROJECT_DIR$/FlowLayout/FlowLayout.iml" />
       <module fileurl="file://$PROJECT_DIR$/SlideListView/SlideListView.iml" filepath="$PROJECT_DIR$/SlideListView/SlideListView.iml" />
       <module fileurl="file://$PROJECT_DIR$/TestListView/TestListView.iml" filepath="$PROJECT_DIR$/TestListView/TestListView.iml" />
+      <module fileurl="file://$PROJECT_DIR$/TitleBar/TitleBar.iml" filepath="$PROJECT_DIR$/TitleBar/TitleBar.iml" />
       <module fileurl="file://$PROJECT_DIR$/ViewDragHelper/ViewDragHelper.iml" filepath="$PROJECT_DIR$/ViewDragHelper/ViewDragHelper.iml" />
     </modules>
   </component>
