@@ -1,37 +1,34 @@
 package com.example.SlideListView.adapter;
 
-import java.util.List;
-
-
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 import com.example.SlideListView.R;
-import com.example.SlideListView.SlideListView;
+import com.example.SlideListView.SlideView;
+
+import java.util.List;
 
 
 public class SlideAdapter extends BaseAdapter implements
-        OnClickListener {
+        OnClickListener, SlideView.OnSlideListener {
 
+    // 上次处于打开状态的SlideView
+    private SlideView mLastSlideViewWithStatusOn;
     private LayoutInflater mInflater;
     List<String> mList;
     Context mContext;
-    SlideListView mListView;
     // 上次处于打开状态的SlideView
     private int mPosition;
 
-    public SlideAdapter(Context context, List<String> list, SlideListView listView) {
+    public SlideAdapter(Context context, List<String> list) {
         super();
         mList = list;
         mContext = context;
         mInflater = LayoutInflater.from(context);
-        mListView = listView;
     }
 
     public int getCount() {
@@ -49,56 +46,67 @@ public class SlideAdapter extends BaseAdapter implements
     public View getView(final int position, View convertView, final ViewGroup parent) {
         mPosition = position;
         ViewHolder viewHolder;
+        SlideView slideView = (SlideView) convertView;
         if (convertView == null) {
             // 这里是我们的item
-            convertView = mInflater.inflate(R.layout.item, null);
+            View itemView = mInflater.inflate(R.layout.list_item, null);
 
+            slideView = new SlideView(mContext);
+            // 这里把item加入到slideView
+            slideView.setContentView(itemView);
 
             // 下面是做一些数据缓存
-            viewHolder = new ViewHolder();
-            viewHolder.textView = (TextView) convertView.findViewById(R.id.text);
-            viewHolder.deleteView = (TextView) convertView.findViewById(R.id.delete);
+            viewHolder = new ViewHolder(slideView);
+            slideView.setOnSlideListener(this);
 
-            convertView.setTag(viewHolder);
+            slideView.setTag(viewHolder);
         } else {
             viewHolder = (ViewHolder) convertView.getTag();
         }
-
         viewHolder.textView.setText(mList.get(position));
-//        viewHolder.textView.setOnClickListener(new OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                Toast.makeText(mContext, "text==" + position, Toast.LENGTH_SHORT).show();
-//            }
-//        });
-//        viewHolder.deleteView.setOnClickListener(new OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                Toast.makeText(mContext, "delete==" + position, Toast.LENGTH_SHORT).show();
-//            }
-//        });
-        return convertView;
+        viewHolder.deleteView.setOnClickListener(this);
+
+        return slideView;
     }
 
-    @Override
-    public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.text:
 
-                break;
-            case R.id.delete:
-
-                break;
+    public void onSlide(View view, int status) {
+        // 如果当前存在已经打开的SlideView，那么将其关闭
+        if (mLastSlideViewWithStatusOn != null
+                && mLastSlideViewWithStatusOn != view) {
+            mLastSlideViewWithStatusOn.shrink();
+        }
+        // 记录本次处于打开状态的view
+        if (status == SLIDE_STATUS_ON) {
+            mLastSlideViewWithStatusOn = (SlideView) view;
         }
 
     }
 
+    // 调用接口方法实现
+    private TopbarClickListener listener;
+
+    public void setOnTopbarClickListener(TopbarClickListener listener) {
+        this.listener = listener;
+    }
+
+    public interface TopbarClickListener {
+        public void click(View v);
+    }
+
+    public void onClick(View v) {
+        if (listener != null)
+            listener.click(v);
+    }
 
     class ViewHolder {
         public TextView textView;
-        public TextView deleteView;
+        public ViewGroup deleteView;
 
-
+        public ViewHolder(View view) {
+            textView = (TextView) view.findViewById(R.id.title);
+            deleteView = (ViewGroup) view.findViewById(R.id.holder);
+        }
     }
 
 }

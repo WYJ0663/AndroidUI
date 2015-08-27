@@ -15,7 +15,7 @@ public class MyActivity extends Activity implements AdapterView.OnItemClickListe
      * Called when the activity is first created.
      */
 
-    private SlideListView listView;
+    private ListViewCompat listView;
     private SlideAdapter adapter;
     private List<String> dataSourceList;
 
@@ -32,7 +32,7 @@ public class MyActivity extends Activity implements AdapterView.OnItemClickListe
 
     private void init() {
 
-        listView = (SlideListView) findViewById(R.id.list_view);
+        listView = (ListViewCompat) findViewById(R.id.list_view);
 
         dataSourceList = new ArrayList<String>();
 
@@ -41,7 +41,7 @@ public class MyActivity extends Activity implements AdapterView.OnItemClickListe
             dataSourceList.add("滑动删除" + i);
         }
 
-        adapter = new SlideAdapter(this, dataSourceList, listView);
+        adapter = new SlideAdapter(this, dataSourceList);
         listView.setAdapter(adapter);
 
         listView.setOnItemClickListener(this);
@@ -49,10 +49,23 @@ public class MyActivity extends Activity implements AdapterView.OnItemClickListe
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        Toast.makeText(MyActivity.this, "onItemClick--" + position, Toast.LENGTH_SHORT).show();
-        listView.closeView();
+        // 这里处理ListItem的点击事件
+        SlideView slideView = (SlideView) view;
+        slideView.getStatus();
+        if (slideView.getStatus() == SlideView.OnSlideListener.SLIDE_STATUS_OFF) {
+            Toast.makeText(MyActivity.this, "onItemClick position=" + position + "  "
+                    + slideView.getStatus(), Toast.LENGTH_SHORT).show();
+        }
 
-
+        adapter.setOnTopbarClickListener(new SlideAdapter.TopbarClickListener() {
+            public void click(View v) {
+                if (v.getId() == R.id.holder) {
+                    int position = listView.getPositionForView(v);
+                    Toast.makeText(MyActivity.this, "onItemClick Delete position=" + position
+                            , Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
     }
 
 }

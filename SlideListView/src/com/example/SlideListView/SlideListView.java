@@ -5,6 +5,7 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.*;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Scroller;
@@ -12,7 +13,7 @@ import android.widget.Scroller;
 /**
  * Created by WYJ on 2015/8/2.
  */
-public class SlideListView extends ListView implements View.OnTouchListener {
+public class SlideListView extends ListView implements View.OnTouchListener,AbsListView.OnScrollListener {
 
     private static final String TAG = "SlideListView";
     private Context context;
@@ -82,14 +83,10 @@ public class SlideListView extends ListView implements View.OnTouchListener {
                         .getDisplayMetrics());
 
         setOnTouchListener(this);
-
+        setOnScrollListener(this);
     }
 
 
-    private static int SLIDE_STATUS = 0;
-    private static final int SLIDE_STOP = 0;
-    private static final int SLIDE_L_R = 1;
-    private static final int SLIDE_T_B = 2;
 
     @Override
     public boolean dispatchTouchEvent(MotionEvent event) {
@@ -121,20 +118,6 @@ public class SlideListView extends ListView implements View.OnTouchListener {
                 break;
             case MotionEvent.ACTION_MOVE:
 
-                //左右滑动中，上下滑动中，停止滑动，（scroller滑动中全部全部无效）
-//                int xDiff = Math.abs(x - downX);
-//                int yDiff = Math.abs(y - downY);
-//                if (xDiff > mTouchSlop && yDiff > mTouchSlop) {
-//                    if (SLIDE_STATUS == SLIDE_STOP) {
-//                        if (xDiff > yDiff) {
-//                            SLIDE_STATUS = SLIDE_L_R;
-//                        } else {
-//                            SLIDE_STATUS = SLIDE_T_B;
-//                        }
-//                    }
-//                } else {
-//                    SLIDE_STATUS = SLIDE_STOP;
-//                }
                 break;
             case MotionEvent.ACTION_POINTER_UP:
                 break;
@@ -148,7 +131,7 @@ public class SlideListView extends ListView implements View.OnTouchListener {
     private static final int TAN = 2;
 
     private VelocityTracker velocityTracker;
-    private static final int SNAP_VELOCITY = 600;
+    private static final int SNAP_VELOCITY = 200;
 
     private void addVelocityTracker(MotionEvent event) {
         if (velocityTracker == null) {
@@ -213,6 +196,9 @@ public class SlideListView extends ListView implements View.OnTouchListener {
     @Override
     public boolean onTouch(View v, MotionEvent event) {
 
+            if (isTBScroll) {
+                return false;
+            }
 
         addVelocityTracker(event);
         int x = (int) event.getX();
@@ -223,12 +209,10 @@ public class SlideListView extends ListView implements View.OnTouchListener {
 
             switch (event.getAction()) {
                 case MotionEvent.ACTION_DOWN:
-                    Log.e(TAG, "onTouch ACTION_DOWN-SLIDE_STATUS=" + SLIDE_STATUS);
                     lastX = x;
 
                     break;
                 case MotionEvent.ACTION_MOVE:
-                    Log.e(TAG, "onTouch ACTION_MOVE-SLIDE_STATUS=" + SLIDE_STATUS);
                     int deltaX = x - lastX; // X移动距离
                     int newScrollX = scrollX - deltaX;
                     if (deltaX != 0) {
@@ -244,7 +228,6 @@ public class SlideListView extends ListView implements View.OnTouchListener {
                 break;
 
                 case MotionEvent.ACTION_UP:
-                    Log.e(TAG, "onTouch ACTION_UP-SLIDE_STATUS=" + SLIDE_STATUS);
                     if (scroller.isFinished()) {
                         velocityTracker.computeCurrentVelocity(1000);
                         int velocityX = (int) velocityTracker.getXVelocity();
@@ -271,11 +254,31 @@ public class SlideListView extends ListView implements View.OnTouchListener {
 
                         recycleVelocityTracker();
                     }
-                    SLIDE_STATUS = SLIDE_STOP;
                     break;
             }
 
         }
         return false;
+    }
+
+    private boolean isTBScroll = false;
+    @Override
+    public void onScrollStateChanged(AbsListView view, int scrollState) {
+        switch(scrollState){
+            case OnScrollListener.SCROLL_STATE_IDLE://空闲状态
+                isTBScroll = false;
+                break;
+            case OnScrollListener.SCROLL_STATE_FLING://滚动状态
+                isTBScroll = true;
+                break;
+            case OnScrollListener.SCROLL_STATE_TOUCH_SCROLL://触摸后滚动
+                isTBScroll = true;
+                break;
+        }
+    }
+
+    @Override
+    public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+
     }
 }
